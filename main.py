@@ -13,9 +13,11 @@ nlp_text_labeling_tool.columnconfigure(2, weight=2)
 nlp_text_labeling_tool.rowconfigure(0, weight=1)
 nlp_text_labeling_tool.rowconfigure(1, weight=1)
 
-#LEFT SIDE BAR
+# LEFT SIDE BAR
 
-frame_left = Frame(nlp_text_labeling_tool, background="#2d2d2d", relief="groove", borderwidth=2)
+frame_left = Frame(
+    nlp_text_labeling_tool, background="#2d2d2d", relief="groove", borderwidth=2
+)
 frame_left.grid(row=0, column=0, rowspan=2, sticky="nsew")
 
 frame_left.columnconfigure(0, weight=1)
@@ -27,14 +29,18 @@ select_file.grid(row=1, column=0, sticky="ew", pady=10, padx=10)
 
 # MIDDLE SECTION
 
-frame_mid = Frame(nlp_text_labeling_tool, background="#2d2d2d")
+frame_mid = Frame(
+    nlp_text_labeling_tool, background="#2d2d2d", relief="groove", borderwidth=2
+)
 frame_mid.grid(row=0, column=1, sticky="nsew", rowspan=2)
 
 frame_mid.columnconfigure(0, weight=1)
 frame_mid.rowconfigure(0, weight=1)
 frame_mid.rowconfigure(1, weight=0)
 
-button_frame = Frame(frame_mid,)
+button_frame = Frame(
+    frame_mid,
+)
 button_frame.grid(row=1, column=0, sticky="ew", pady=10, padx=10)
 
 button_frame.columnconfigure(0, weight=1)
@@ -50,12 +56,24 @@ delete_label.grid(row=0, column=2, sticky="ew")
 
 # RIGHT SIDE BAR : UP
 
-frame_right_up = Frame(nlp_text_labeling_tool, background="#2d2d2d")
+frame_right_up = Frame(
+    nlp_text_labeling_tool, background="#2d2d2d", relief="groove", borderwidth=2
+)
 frame_right_up.grid(row=0, column=2, sticky="nsew")
 
 # RIGHT SIDE BAR : DOWN
 
-frame_right_down = Frame(nlp_text_labeling_tool, background="#2d2d2d")
+frame_right_down = Frame(
+    nlp_text_labeling_tool, background="#2d2d2d", relief="groove", borderwidth=2
+)
 frame_right_down.grid(row=1, column=2, sticky="nsew")
+
+frame_right_down.columnconfigure(0, weight=1)
+frame_right_down.rowconfigure(0, weight=1)
+frame_right_down.rowconfigure(1, weight=0)
+
+
+save_labels = Button(frame_right_down, text="Save Labels")
+save_labels.grid(row=1, column=0, sticky="ew", pady=10, padx=10)
 
 nlp_text_labeling_tool.mainloop()
