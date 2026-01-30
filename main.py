@@ -49,6 +49,8 @@ class nlp_text_labeling_tool(Tk):
         )
         self.file_selector.grid(row=0, column=0, sticky="nsew", pady=(0, 10))
 
+        self.file_selector.bind("<<ListboxSelect>>", self.display_selected_file)
+
         self.select_folder_button = Button(
             self.frame_left, text="Select Folder", command=self.select_folder
         )
@@ -70,6 +72,20 @@ class nlp_text_labeling_tool(Tk):
         self.frame_mid.columnconfigure(0, weight=1)
         self.frame_mid.rowconfigure(0, weight=1)
         self.frame_mid.rowconfigure(1, weight=0)
+
+        self.text_display_area = Text(
+            self.frame_mid,
+            width=40,
+            height=10,
+            background="#2d2d2d",
+            foreground="white",
+            font=("Consolas", 12),
+            borderwidth=0,
+            highlightthickness=0,
+            relief="flat",
+        )
+
+        self.text_display_area.grid(row=0, column=0, sticky="nsew", pady=(0, 10))
 
         self.button_frame = Frame(self.frame_mid, background="#2d2d2d")
         self.button_frame.grid(row=1, column=0, sticky="ew")
@@ -122,12 +138,25 @@ class nlp_text_labeling_tool(Tk):
 
     def select_folder(self):
         selected_folder_path = filedialog.askdirectory()
+        self.current_folder = selected_folder_path
         if selected_folder_path:
             self.file_selector.delete(0, END)
             os.listdir(selected_folder_path)
             for file_name in os.listdir(selected_folder_path):
                 if file_name.endswith(".txt"):
                     self.file_selector.insert(END, file_name)
+
+    def display_selected_file(self, event):
+        selection = self.file_selector.curselection()
+        if selection:
+            file_name = self.file_selector.get(selection[0])
+            full_path_to_file = os.path.join(self.current_folder, file_name)
+
+            with open(full_path_to_file, "r", encoding="utf-8") as file:
+                file_content = file.read()
+
+            self.text_display_area.delete("1.0", END)
+            self.text_display_area.insert("1.0", file_content)
 
 
 if __name__ == "__main__":
