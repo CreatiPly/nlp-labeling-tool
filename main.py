@@ -1,6 +1,7 @@
 # GUI basics practice
 
 from tkinter import *
+from tkinter import filedialog
 import os
 
 
@@ -37,8 +38,21 @@ class nlp_text_labeling_tool(Tk):
         self.frame_left.rowconfigure(0, weight=1)
         self.frame_left.rowconfigure(1, weight=0)
 
-        self.select_file = Button(self.frame_left, text="Select File")
-        self.select_file.grid(row=1, column=0, sticky="ew")
+        self.file_selector = Listbox(
+            self.frame_left,
+            background="#2d2d2d",
+            foreground="white",
+            font=("Consolas", 12),
+            borderwidth=0,
+            highlightthickness=0,
+            relief="flat",
+        )
+        self.file_selector.grid(row=0, column=0, sticky="nsew", pady=(0, 10))
+
+        self.select_folder_button = Button(
+            self.frame_left, text="Select Folder", command=self.select_folder
+        )
+        self.select_folder_button.grid(row=1, column=0, sticky="ew")
 
     def middle_section(self):
         # MIDDLE SECTION
@@ -105,6 +119,15 @@ class nlp_text_labeling_tool(Tk):
 
         self.save_labels = Button(self.frame_right_down, text="Save Labels")
         self.save_labels.grid(row=1, column=0, sticky="ew")
+
+    def select_folder(self):
+        selected_folder_path = filedialog.askdirectory()
+        if selected_folder_path:
+            self.file_selector.delete(0, END)
+            os.listdir(selected_folder_path)
+            for file_name in os.listdir(selected_folder_path):
+                if file_name.endswith(".txt"):
+                    self.file_selector.insert(END, file_name)
 
 
 if __name__ == "__main__":
