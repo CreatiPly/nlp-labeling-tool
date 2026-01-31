@@ -1,29 +1,12 @@
 {
     "text": "Haseeb studies at NUST, or at least tries to.",
-    "annotations": [
+    "labels": [
         {
-            "label": "PERSON",
-            "start": 0,
-            "end": 6,
-            "text": "Haseeb"
-        },
-        {
-            "label": "LOCATION",
-            "start": 18,
-            "end": 22,
-            "text": "NUST"
-        },
-        {
-            "label": "POSITIVE",
-            "start": 7,
-            "end": 22,
-            "text": "studies at NUST"
-        },
-        {
-            "label": "NEGATIVE",
-            "start": 24,
-            "end": 45,
-            "text": "or at least tries to."
+            "label_name": "NAME",
+            "start_index": 0,
+            "end_index": 6,
+            "selected_text": "Haseeb",
+            "color": "#a0a0a0"
         }
     ]
 }

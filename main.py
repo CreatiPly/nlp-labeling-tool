@@ -26,6 +26,8 @@ class nlp_text_labeling_tool(Tk):
         self.right_side_bar_down()
 
         self.all_labels = []
+        self.current_folder = ""
+        self.current_file = ""
 
     def left_side_bar(self):
         self.frame_left = LabelFrame(
@@ -152,15 +154,27 @@ class nlp_text_labeling_tool(Tk):
         self.frame_right_down.rowconfigure(0, weight=1)
         self.frame_right_down.rowconfigure(1, weight=0)
 
-        self.save_labels_button = Button(self.frame_right_down, text="Save Labels")
+        self.stats_list = Listbox(
+            self.frame_right_down,
+            background="#2d2d2d",
+            foreground="white",
+            font=("Consolas", 12),
+            borderwidth=0,
+            highlightthickness=0,
+            relief="flat",
+        )
+        self.stats_list.grid(row=0, column=0, sticky="nsew")
+
+        self.save_labels_button = Button(
+            self.frame_right_down, text="Save Labels", command=self.save_labels
+        )
         self.save_labels_button.grid(row=1, column=0, sticky="ew")
 
     def select_folder(self):
         selected_folder_path = filedialog.askdirectory()
-        self.current_folder = selected_folder_path
         if selected_folder_path:
+            self.current_folder = selected_folder_path
             self.file_selector.delete(0, END)
-            os.listdir(selected_folder_path)
             for file_name in os.listdir(selected_folder_path):
                 if file_name.endswith(".txt"):
                     self.file_selector.insert(END, file_name)
@@ -168,7 +182,11 @@ class nlp_text_labeling_tool(Tk):
     def display_selected_file(self, event):
         selection = self.file_selector.curselection()
         if selection:
+            self.all_labels = []
+            self.label_list.delete(0, END)
+
             file_name = self.file_selector.get(selection[0])
+            self.current_file = file_name
             full_path_to_file = os.path.join(self.current_folder, file_name)
 
             with open(full_path_to_file, "r", encoding="utf-8") as file:
@@ -182,6 +200,9 @@ class nlp_text_labeling_tool(Tk):
             start = self.text_display_area.index("sel.first")
             end = self.text_display_area.index("sel.last")
             selected_text = self.text_display_area.get(start, end)
+
+            char_start = len(self.text_display_area.get("1.0", start))
+            char_end = char_start + len(selected_text)
 
             Label_name = simpledialog.askstring(
                 "Input", "Enter label name:", parent=self
@@ -198,22 +219,49 @@ class nlp_text_labeling_tool(Tk):
                 )
 
                 label_data = {
-                    "label_id": label_id,
-                    "label_name": Label_name,
-                    "start_index": start,
-                    "end_index": end,
+                    "label_name": Label_name.upper(),
+                    "start_index": char_start,
+                    "end_index": char_end,
                     "selected_text": selected_text,
                     "color": chosen_color,
                 }
                 self.all_labels.append(label_data)
 
-                display_label = f"{Label_name}: '{selected_text}' ({start} to {end})"
+                display_label = (
+                    f"{Label_name}: '{selected_text}' ({char_start} to {char_end})"
+                )
                 self.label_list.insert(END, display_label)
+
+                self.update_stats()
         except TclError:
             print("No text selected to label.")
 
     def save_labels(self):
-        pass
+        if not self.current_file or not self.current_folder:
+            return
+
+        json_file_path = self.current_file.replace(".txt", ".json")
+        save_path = os.path.join(self.current_folder, json_file_path)
+
+        output_data = {
+            "text": self.text_display_area.get("1.0", "end-1c"),
+            "labels": self.all_labels,
+        }
+
+        with open(save_path, "w", encoding="utf-8") as f:
+            json.dump(output_data, f, indent=4)
+
+        print(f"Labels saved to {save_path}")
+
+    def update_stats(self):
+        self.stats_list.delete(0, END)
+        counts = {}
+        for item in self.all_labels:
+            name = item["label_name"]
+            counts[name] = counts.get(name, 0) + 1
+
+        for name, count in counts.items():
+            self.stats_list.insert(END, f"{name}: {count}")
 
 
 if __name__ == "__main__":
