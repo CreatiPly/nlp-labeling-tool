@@ -1,7 +1,7 @@
 # GUI basics practice
 
 from tkinter import *
-from tkinter import filedialog
+from tkinter import filedialog, simpledialog
 import os
 
 
@@ -94,12 +94,14 @@ class nlp_text_labeling_tool(Tk):
         self.button_frame.columnconfigure(1, weight=1)
         self.button_frame.columnconfigure(2, weight=1)
 
-        self.add_label = Button(self.button_frame, text="Add Label")
-        self.add_label.grid(row=0, column=0, sticky="ew", padx=5)
-        self.edit_label = Button(self.button_frame, text="Edit Label")
-        self.edit_label.grid(row=0, column=1, sticky="ew", padx=5)
-        self.delete_label = Button(self.button_frame, text="Delete Label")
-        self.delete_label.grid(row=0, column=2, sticky="ew", padx=5)
+        self.add_label_button = Button(
+            self.button_frame, text="Add Label", command=self.add_label
+        )
+        self.add_label_button.grid(row=0, column=0, sticky="ew", padx=5)
+        self.edit_label_button = Button(self.button_frame, text="Edit Label")
+        self.edit_label_button.grid(row=0, column=1, sticky="ew", padx=5)
+        self.delete_label_button = Button(self.button_frame, text="Delete Label")
+        self.delete_label_button.grid(row=0, column=2, sticky="ew", padx=5)
 
     def right_side_bar_up(self):
         # RIGHT SIDE BAR : UP
@@ -157,6 +159,27 @@ class nlp_text_labeling_tool(Tk):
 
             self.text_display_area.delete("1.0", END)
             self.text_display_area.insert("1.0", file_content)
+
+    def add_label(self):
+        try:
+            start = self.text_display_area.index("sel.first")
+            end = self.text_display_area.index("sel.last")
+            selected_text = self.text_display_area.get(start, end)
+
+            Label_name = simpledialog.askstring(
+                "Input", "Enter label name:", parent=self
+            )
+
+            if Label_name:
+                print(f"Label '{Label_name}' added to text: '{selected_text}'")
+
+                self.text_display_area.tag_add(Label_name, start, end)
+                self.text_display_area.tag_config(
+                    Label_name, background="yellow", foreground="black"
+                )
+
+        except TclError:
+            print("No text selected to label.")
 
 
 if __name__ == "__main__":
