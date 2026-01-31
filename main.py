@@ -1,8 +1,9 @@
 # GUI basics practice
 
 from tkinter import *
-from tkinter import filedialog, simpledialog
+from tkinter import filedialog, simpledialog, colorchooser
 import os
+import json
 
 
 class nlp_text_labeling_tool(Tk):
@@ -23,6 +24,8 @@ class nlp_text_labeling_tool(Tk):
         self.middle_section()
         self.right_side_bar_up()
         self.right_side_bar_down()
+
+        self.all_labels = []
 
     def left_side_bar(self):
         self.frame_left = LabelFrame(
@@ -117,6 +120,20 @@ class nlp_text_labeling_tool(Tk):
 
         self.frame_right_up.grid(row=0, column=2, sticky="nsew", padx=5, pady=5)
 
+        self.frame_right_up.columnconfigure(0, weight=1)
+        self.frame_right_up.rowconfigure(0, weight=1)
+
+        self.label_list = Listbox(
+            self.frame_right_up,
+            background="#2d2d2d",
+            foreground="white",
+            font=("Consolas", 12),
+            borderwidth=0,
+            highlightthickness=0,
+            relief="flat",
+        )
+        self.label_list.grid(row=0, column=0, sticky="nsew")
+
     def right_side_bar_down(self):
         # RIGHT SIDE BAR : down
 
@@ -135,8 +152,8 @@ class nlp_text_labeling_tool(Tk):
         self.frame_right_down.rowconfigure(0, weight=1)
         self.frame_right_down.rowconfigure(1, weight=0)
 
-        self.save_labels = Button(self.frame_right_down, text="Save Labels")
-        self.save_labels.grid(row=1, column=0, sticky="ew")
+        self.save_labels_button = Button(self.frame_right_down, text="Save Labels")
+        self.save_labels_button.grid(row=1, column=0, sticky="ew")
 
     def select_folder(self):
         selected_folder_path = filedialog.askdirectory()
@@ -171,15 +188,32 @@ class nlp_text_labeling_tool(Tk):
             )
 
             if Label_name:
-                print(f"Label '{Label_name}' added to text: '{selected_text}'")
+                color = colorchooser.askcolor(title="Choose label color", parent=self)
+                chosen_color = color[1] if color[1] else "#ffff00"
 
-                self.text_display_area.tag_add(Label_name, start, end)
+                label_id = f"{Label_name}_{start}"
+                self.text_display_area.tag_add(label_id, start, end)
                 self.text_display_area.tag_config(
-                    Label_name, background="yellow", foreground="black"
+                    label_id, background=chosen_color, foreground="black"
                 )
 
+                label_data = {
+                    "label_id": label_id,
+                    "label_name": Label_name,
+                    "start_index": start,
+                    "end_index": end,
+                    "selected_text": selected_text,
+                    "color": chosen_color,
+                }
+                self.all_labels.append(label_data)
+
+                display_label = f"{Label_name}: '{selected_text}' ({start} to {end})"
+                self.label_list.insert(END, display_label)
         except TclError:
             print("No text selected to label.")
+
+    def save_labels(self):
+        pass
 
 
 if __name__ == "__main__":
