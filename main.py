@@ -105,7 +105,9 @@ class nlp_text_labeling_tool(Tk):
         self.add_label_button.grid(row=0, column=0, sticky="ew", padx=5)
         self.edit_label_button = Button(self.button_frame, text="Edit Label")
         self.edit_label_button.grid(row=0, column=1, sticky="ew", padx=5)
-        self.delete_label_button = Button(self.button_frame, text="Delete Label")
+        self.delete_label_button = Button(
+            self.button_frame, text="Delete Label", command=self.delete_label
+        )
         self.delete_label_button.grid(row=0, column=2, sticky="ew", padx=5)
 
     def right_side_bar_up(self):
@@ -287,6 +289,26 @@ class nlp_text_labeling_tool(Tk):
 
         for name, count in counts.items():
             self.stats_list.insert(END, f"{name}: {count}")
+
+    def delete_label(self):
+        selected = self.label_list.curselection()
+
+        if not selected:
+            return
+
+        index = selected[0]
+        label_to_delete = self.all_labels[index]
+
+        start_index = f"1.0+{label_to_delete['start_index']}c"
+        end_index = f"1.0+{label_to_delete['end_index']}c"
+        label_id = f"{label_to_delete['label_name']}_{start_index}"
+
+        self.text_display_area.tag_remove(label_id, start_index, end_index)
+
+        self.all_labels.pop(index)
+        self.label_list.delete(index)
+
+        self.update_stats()
 
 
 if __name__ == "__main__":

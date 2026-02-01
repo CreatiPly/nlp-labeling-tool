@@ -1,0 +1,12 @@
+{
+    "text": "it's gonna rain today",
+    "labels": [
+        {
+            "label_name": "RAIN",
+            "start_index": 11,
+            "end_index": 15,
+            "selected_text": "rain",
+            "color": "#50f1e1"
+        }
+    ]
+}
