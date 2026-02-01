@@ -1,0 +1,12 @@
+{
+    "text": "khan saib",
+    "labels": [
+        {
+            "label_name": "NAME",
+            "start_index": 0,
+            "end_index": 4,
+            "selected_text": "khan",
+            "color": "#00ff00"
+        }
+    ]
+}

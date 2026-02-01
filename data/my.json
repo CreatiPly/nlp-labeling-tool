@@ -2,7 +2,7 @@
     "text": "Haseeb studies at NUST, or at least tries to.",
     "labels": [
         {
-            "label_name": "MYNAME",
+            "label_name": "NAME",
             "start_index": 0,
             "end_index": 6,
             "selected_text": "Haseeb",
@@ -14,6 +14,27 @@
             "end_index": 44,
             "selected_text": "at least tries to",
             "color": "#ffff80"
+        },
+        {
+            "label_name": "PLACE",
+            "start_index": 18,
+            "end_index": 23,
+            "selected_text": "NUST,",
+            "color": "#9160e1"
+        },
+        {
+            "label_name": "VERB",
+            "start_index": 7,
+            "end_index": 14,
+            "selected_text": "studies",
+            "color": "#a0a0a0"
+        },
+        {
+            "label_name": "PREPOSITION",
+            "start_index": 15,
+            "end_index": 17,
+            "selected_text": "at",
+            "color": "#a0a0a0"
         }
     ]
 }

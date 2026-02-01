@@ -1,7 +1,7 @@
 # GUI basics practice
 
 from tkinter import *
-from tkinter import filedialog, simpledialog, colorchooser
+from tkinter import filedialog, simpledialog, colorchooser, messagebox
 import os
 import json
 
@@ -179,7 +179,7 @@ class nlp_text_labeling_tool(Tk):
         if selected_folder_path:
             self.current_folder = selected_folder_path
             self.file_selector.delete(0, END)
-            for file_name in os.listdir(selected_folder_path):
+            for file_name in sorted(os.listdir(selected_folder_path)):
                 if file_name.endswith(".txt"):
                     self.file_selector.insert(END, file_name)
 
@@ -219,50 +219,44 @@ class nlp_text_labeling_tool(Tk):
                         label_id, background=item["color"], foreground="black"
                     )
 
-                    display_label = f"{name}: '{item['selected_text']}' ({item['start_index']} to {item['end_index']})"
+                    display_label = f"{name}: '{item['selected_text']}' [{item['start_index']}:{item['end_index']}]"
                     self.label_list.insert(END, display_label)
 
                 self.update_stats()
 
     def add_label(self):
-        try:
-            start = self.text_display_area.index("sel.first")
-            end = self.text_display_area.index("sel.last")
-            selected_text = self.text_display_area.get(start, end)
+        if not self.text_display_area.tag_ranges("sel"):
+            return
 
-            char_start = len(self.text_display_area.get("1.0", start))
-            char_end = char_start + len(selected_text)
-
-            Label_name = simpledialog.askstring(
-                "Input", "Enter label name:", parent=self
+        start = self.text_display_area.index("sel.first")
+        end = self.text_display_area.index("sel.last")
+        selected_text = self.text_display_area.get(start, end)
+        char_start = len(self.text_display_area.get("1.0", start))
+        char_end = char_start + len(selected_text)
+        label_name = simpledialog.askstring("Input", "Enter label name:", parent=self)
+        if label_name:
+            label_name = label_name.upper()
+            color = colorchooser.askcolor(title="Choose label color", parent=self)
+            chosen_color = color[1] if color[1] else "#ffff00"
+            start_index = f"1.0+{char_start}c"
+            label_id = f"{label_name}_{start_index}"
+            self.text_display_area.tag_add(label_id, start, end)
+            self.text_display_area.tag_config(
+                label_id, background=chosen_color, foreground="black"
             )
+            label_data = {
+                "label_name": label_name,
+                "start_index": char_start,
+                "end_index": char_end,
+                "selected_text": selected_text,
+                "color": chosen_color,
+            }
+            self.all_labels.append(label_data)
+            display_label = f"{label_name}: '{selected_text}' [{char_start}:{char_end}]"
+            self.label_list.insert(END, display_label)
 
-            if Label_name:
-                color = colorchooser.askcolor(title="Choose label color", parent=self)
-                chosen_color = color[1] if color[1] else "#ffff00"
-
-                start_index = f"1.0+{char_start}c"
-                label_id = f"{Label_name.upper()}_{start_index}"
-                self.text_display_area.tag_add(label_id, start, end)
-                self.text_display_area.tag_config(
-                    label_id, background=chosen_color, foreground="black"
-                )
-
-                label_data = {
-                    "label_name": Label_name.upper(),
-                    "start_index": char_start,
-                    "end_index": char_end,
-                    "selected_text": selected_text,
-                    "color": chosen_color,
-                }
-                self.all_labels.append(label_data)
-
-                display_label = f"{Label_name.upper()}: '{selected_text}' ({char_start} to {char_end})"
-                self.label_list.insert(END, display_label)
-
-                self.update_stats()
-        except TclError:
-            print("No text selected to label.")
+            messagebox.showinfo("Label added", "Label added successfully.")
+            self.update_stats()
 
     def save_labels(self):
         if not self.current_file or not self.current_folder:
@@ -279,7 +273,7 @@ class nlp_text_labeling_tool(Tk):
         with open(save_path, "w", encoding="utf-8") as f:
             json.dump(output_data, f, indent=4)
 
-        print(f"Labels saved to {save_path}")
+        messagebox.showinfo("Labels saved", "Labels saved successfully.")
 
     def update_stats(self):
         self.stats_list.delete(0, END)
@@ -308,6 +302,8 @@ class nlp_text_labeling_tool(Tk):
 
         self.all_labels.pop(index)
         self.label_list.delete(index)
+
+        messagebox.showinfo("Label deleted", "Label deleted successfully.")
 
         self.update_stats()
 
@@ -348,9 +344,10 @@ class nlp_text_labeling_tool(Tk):
         label["color"] = new_color
 
         self.label_list.delete(index)
-        display_label = f"{label['label_name']}: '{label['selected_text']}' ({label['start_index']} to {label['end_index']})"
+        display_label = f"{label['label_name']}: '{label['selected_text']}' [{label['start_index']}:{label['end_index']}]"
         self.label_list.insert(index, display_label)
 
+        messagebox.showinfo("Label edited", "Label edited successfully.")
         self.update_stats()
 
 
