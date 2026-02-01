@@ -14,6 +14,10 @@ class nlp_text_labeling_tool(Tk):
         self.title("NLP Text Labeling Tool by Haseeb Khan 539657")
         self.configure(background="#2d2d2d")
 
+        self.all_labels = []
+        self.current_folder = ""
+        self.current_file = ""
+
         self.columnconfigure(0, weight=1)
         self.columnconfigure(1, weight=3)
         self.columnconfigure(2, weight=2)
@@ -24,10 +28,6 @@ class nlp_text_labeling_tool(Tk):
         self.middle_section()
         self.right_side_bar_up()
         self.right_side_bar_down()
-
-        self.all_labels = []
-        self.current_folder = ""
-        self.current_file = ""
 
     def left_side_bar(self):
         self.frame_left = LabelFrame(
@@ -194,6 +194,31 @@ class nlp_text_labeling_tool(Tk):
 
             self.text_display_area.delete("1.0", END)
             self.text_display_area.insert("1.0", file_content)
+
+            json_file_path = file_name.replace(".txt", ".json")
+            full_json_path = os.path.join(self.current_folder, json_file_path)
+
+            if os.path.exists(full_json_path):
+                with open(full_json_path, "r", encoding="utf-8") as f:
+                    saved_data = json.load(f)
+                    self.all_labels = saved_data.get("labels", [])
+
+                for item in self.all_labels:
+                    name = item["label_name"]
+
+                    start_index = f"1.0+{item['start_index']}c"
+                    end_index = f"1.0+{item['end_index']}c"
+
+                    tag_id = f"{name}_{start_index}"
+                    self.text_display_area.tag_add(tag_id, start_index, end_index)
+                    self.text_display_area.tag_config(
+                        tag_id, background=item["color"], foreground="black"
+                    )
+
+                    display_label = f"{name}: '{item['selected_text']}' ({item['start_index']} to {item['end_index']})"
+                    self.label_list.insert(END, display_label)
+
+                self.update_stats()
 
     def add_label(self):
         try:
