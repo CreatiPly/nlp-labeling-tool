@@ -103,7 +103,9 @@ class nlp_text_labeling_tool(Tk):
             self.button_frame, text="Add Label", command=self.add_label
         )
         self.add_label_button.grid(row=0, column=0, sticky="ew", padx=5)
-        self.edit_label_button = Button(self.button_frame, text="Edit Label")
+        self.edit_label_button = Button(
+            self.button_frame, text="Edit Label", command=self.edit_label
+        )
         self.edit_label_button.grid(row=0, column=1, sticky="ew", padx=5)
         self.delete_label_button = Button(
             self.button_frame, text="Delete Label", command=self.delete_label
@@ -306,6 +308,48 @@ class nlp_text_labeling_tool(Tk):
 
         self.all_labels.pop(index)
         self.label_list.delete(index)
+
+        self.update_stats()
+
+    def edit_label(self):
+        selected = self.label_list.curselection()
+        if not selected:
+            return
+
+        index = selected[0]
+        label = self.all_labels[index]
+
+        new_name = simpledialog.askstring(
+            "Edit Label",
+            "Enter new label name:",
+            initialvalue=label["label_name"],
+            parent=self,
+        )
+        if not new_name:
+            return
+
+        color = colorchooser.askcolor(
+            title="Choose new color", color=label["color"], parent=self
+        )
+        new_color = color[1] if color[1] else label["color"]
+
+        start_index = f"1.0+{label['start_index']}c"
+        end_index = f"1.0+{label['end_index']}c"
+        old_tag_id = f"{label['label_name']}_{start_index}"
+        self.text_display_area.tag_remove(old_tag_id, start_index, end_index)
+
+        new_tag_id = f"{new_name.upper()}_{start_index}"
+        self.text_display_area.tag_add(new_tag_id, start_index, end_index)
+        self.text_display_area.tag_config(
+            new_tag_id, background=new_color, foreground="black"
+        )
+
+        label["label_name"] = new_name.upper()
+        label["color"] = new_color
+
+        self.label_list.delete(index)
+        display_label = f"{label['label_name']}: '{label['selected_text']}' ({label['start_index']} to {label['end_index']})"
+        self.label_list.insert(index, display_label)
 
         self.update_stats()
 

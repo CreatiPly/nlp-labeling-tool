@@ -1,4 +1,19 @@
 {
     "text": "Haseeb studies at NUST, or at least tries to.",
-    "labels": []
+    "labels": [
+        {
+            "label_name": "MYNAME",
+            "start_index": 0,
+            "end_index": 6,
+            "selected_text": "Haseeb",
+            "color": "#8080ff"
+        },
+        {
+            "label_name": "SARCASM",
+            "start_index": 27,
+            "end_index": 44,
+            "selected_text": "at least tries to",
+            "color": "#ffff80"
+        }
+    ]
 }
