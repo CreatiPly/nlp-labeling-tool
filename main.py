@@ -211,10 +211,10 @@ class nlp_text_labeling_tool(Tk):
                     start_index = f"1.0+{item['start_index']}c"
                     end_index = f"1.0+{item['end_index']}c"
 
-                    tag_id = f"{name}_{start_index}"
-                    self.text_display_area.tag_add(tag_id, start_index, end_index)
+                    label_id = f"{name}_{start_index}"
+                    self.text_display_area.tag_add(label_id, start_index, end_index)
                     self.text_display_area.tag_config(
-                        tag_id, background=item["color"], foreground="black"
+                        label_id, background=item["color"], foreground="black"
                     )
 
                     display_label = f"{name}: '{item['selected_text']}' ({item['start_index']} to {item['end_index']})"
@@ -239,7 +239,8 @@ class nlp_text_labeling_tool(Tk):
                 color = colorchooser.askcolor(title="Choose label color", parent=self)
                 chosen_color = color[1] if color[1] else "#ffff00"
 
-                label_id = f"{Label_name}_{start}"
+                start_index = f"1.0+{char_start}c"
+                label_id = f"{Label_name.upper()}_{start_index}"
                 self.text_display_area.tag_add(label_id, start, end)
                 self.text_display_area.tag_config(
                     label_id, background=chosen_color, foreground="black"
@@ -254,9 +255,7 @@ class nlp_text_labeling_tool(Tk):
                 }
                 self.all_labels.append(label_data)
 
-                display_label = (
-                    f"{Label_name}: '{selected_text}' ({char_start} to {char_end})"
-                )
+                display_label = f"{Label_name.upper()}: '{selected_text}' ({char_start} to {char_end})"
                 self.label_list.insert(END, display_label)
 
                 self.update_stats()
