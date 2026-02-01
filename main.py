@@ -18,6 +18,11 @@ class nlp_text_labeling_tool(Tk):
         self.current_folder = ""
         self.current_file = ""
 
+        self.bind("<Control-l>", lambda e: self.add_label())
+        self.bind("<Control-s>", lambda e: self.save_labels())
+        self.bind("<Control-d>", lambda e: self.delete_label())
+        self.bind("<Control-e>", lambda e: self.edit_label())
+
         self.columnconfigure(0, weight=1)
         self.columnconfigure(1, weight=3)
         self.columnconfigure(2, weight=2)
@@ -100,15 +105,15 @@ class nlp_text_labeling_tool(Tk):
         self.button_frame.columnconfigure(2, weight=1)
 
         self.add_label_button = Button(
-            self.button_frame, text="Add Label", command=self.add_label
+            self.button_frame, text="Add Label (ctrl + l)", command=self.add_label
         )
         self.add_label_button.grid(row=0, column=0, sticky="ew", padx=5)
         self.edit_label_button = Button(
-            self.button_frame, text="Edit Label", command=self.edit_label
+            self.button_frame, text="Edit Label (ctrl + e)", command=self.edit_label
         )
         self.edit_label_button.grid(row=0, column=1, sticky="ew", padx=5)
         self.delete_label_button = Button(
-            self.button_frame, text="Delete Label", command=self.delete_label
+            self.button_frame, text="Delete Label (ctrl + d)", command=self.delete_label
         )
         self.delete_label_button.grid(row=0, column=2, sticky="ew", padx=5)
 
@@ -170,7 +175,9 @@ class nlp_text_labeling_tool(Tk):
         self.stats_list.grid(row=0, column=0, sticky="nsew")
 
         self.save_labels_button = Button(
-            self.frame_right_down, text="Save Labels", command=self.save_labels
+            self.frame_right_down,
+            text="Save Labels (ctrl + s)",
+            command=self.save_labels,
         )
         self.save_labels_button.grid(row=1, column=0, sticky="ew")
 
@@ -224,7 +231,7 @@ class nlp_text_labeling_tool(Tk):
 
                 self.update_stats()
 
-    def add_label(self):
+    def add_label(self, event=None):
         if not self.text_display_area.tag_ranges("sel"):
             return
 
@@ -255,10 +262,9 @@ class nlp_text_labeling_tool(Tk):
             display_label = f"{label_name}: '{selected_text}' [{char_start}:{char_end}]"
             self.label_list.insert(END, display_label)
 
-            messagebox.showinfo("Label added", "Label added successfully.")
             self.update_stats()
 
-    def save_labels(self):
+    def save_labels(self, event=None):
         if not self.current_file or not self.current_folder:
             return
 
@@ -285,7 +291,7 @@ class nlp_text_labeling_tool(Tk):
         for name, count in counts.items():
             self.stats_list.insert(END, f"{name}: {count}")
 
-    def delete_label(self):
+    def delete_label(self, event=None):
         selected = self.label_list.curselection()
 
         if not selected:
@@ -307,7 +313,7 @@ class nlp_text_labeling_tool(Tk):
 
         self.update_stats()
 
-    def edit_label(self):
+    def edit_label(self, event=None):
         selected = self.label_list.curselection()
         if not selected:
             return
