@@ -1,13 +1,14 @@
 # NLP Text Labeling Tool
 
-**By Haseeb Khan — 539657**
-CS-878 Deep Learning | Week 1 — Programming Assignment 1
+A desktop GUI application for annotating and labeling text files for NLP tasks (e.g., PERSON, LOCATION, POSITIVE). Labels are color-coded, highlighted directly in the text, and saved as JSON files alongside the original `.txt` files.
 
 ---
 
 ## Overview
 
-A desktop GUI application built with Python and Tkinter for annotating and labeling text files with NLP labels (e.g., PERSON, LOCATION, POSITIVE). Labels are color-coded, highlighted directly in the text, and saved as JSON files alongside the original `.txt` files.
+Built with Python and Tkinter, this tool provides a lightweight, dependency-free interface for manual text annotation — a common step in preparing labeled datasets for NLP tasks like named entity recognition or sentiment classification. Annotations are stored in a structured JSON format with character-level start/end indices, making them straightforward to load into a downstream training pipeline.
+
+![App overview](docs/app_overview.png)
 
 ---
 
@@ -15,12 +16,11 @@ A desktop GUI application built with Python and Tkinter for annotating and label
 
 ### Requirements
 
-- Python 3.x
-- Anaconda environment (that i made and named for this is): `DL_prog_assign_1_nlp_tool`
+- Python 3.x with Tkinter (included in most standard Python installs)
 
 ### Dependencies
 
-The tool uses only Python standard library modules — no additional packages need to be installed:
+The tool uses only the Python standard library — no additional packages need to be installed:
 
 - `tkinter` — GUI framework
 - `os` — file and folder handling
@@ -28,16 +28,9 @@ The tool uses only Python standard library modules — no additional packages ne
 
 ### Running the Tool
 
-1. Make sure your environment is active:
-
-   ```
-   conda activate DL_prog_assign_1_nlp_tool
-   ```
-
-2. Run the script:
-   ```
-   python nlp_text_labeling_tool.py
-   ```
+```bash
+python main.py
+```
 
 ---
 
@@ -50,6 +43,8 @@ The tool uses only Python standard library modules — no additional packages ne
 3. Click a file in the list to load it into the text viewer.
 4. If a matching `.json` file already exists in that folder, any previously saved labels will be restored automatically.
 
+![Loaded file list](docs/file_loading.png)
+
 ### Adding a Label
 
 1. Select (highlight) a span of text in the text viewer using your mouse.
@@ -57,6 +52,8 @@ The tool uses only Python standard library modules — no additional packages ne
 3. Enter a label name in the dialog (e.g., PERSON, LOCATION). It will be converted to uppercase automatically.
 4. Pick a color for the label highlight.
 5. The selected text will be highlighted and the label will appear in the Annotations panel on the right.
+
+![Label applied and shown in the Annotations panel](docs/label_applied.png)
 
 ### Editing a Label
 
@@ -93,7 +90,7 @@ The tool uses only Python standard library modules — no additional packages ne
 ## UI Layout
 
 | Panel        | Location       | Purpose                                      |
-| ------------ | -------------- | -------------------------------------------- |
+| ------------ | -------------- | --------------------------------------------- |
 | Files        | Left           | Lists `.txt` files from the selected folder  |
 | Text Display | Center         | Shows the content of the selected file       |
 | Annotations  | Right (top)    | Lists all labels applied to the current file |
@@ -104,6 +101,8 @@ The tool uses only Python standard library modules — no additional packages ne
 ## JSON Save Format
 
 Each `.txt` file gets a matching `.json` file when labels are saved. The structure looks like this:
+
+![JSON output structure](docs/json_output_format.png)
 
 ```json
 {
